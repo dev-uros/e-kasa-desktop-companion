@@ -86,65 +86,65 @@ app.on('activate', () => {
 // code. You can also put them in separate files and import them here.
 
 // Get a cross-platform path for the user's Documents directory
-const documentsPath = app.getPath('documents'); // Can be 'desktop', 'downloads', 'home', etc.
-const directoryToWatch = path.join(documentsPath, 'scanner');
+// const documentsPath = app.getPath('documents'); // Can be 'desktop', 'downloads', 'home', etc.
+// const directoryToWatch = path.join(documentsPath, 'scanner');
 
 
 
-let watcher: FSWatcher
+// let watcher: FSWatcher
 const scanDocument = (browserWindow: BrowserWindow) => {
-    watcher = chokidar.watch(directoryToWatch, {ignoreInitial: true});
-
-    return new Promise((resolve, reject) => {
-        watcher.on('add', (path) => {
-            console.log(path)
-            fs.readFile(path, (err, data) => {
-                if (err) {
-                    console.error('Error reading file:', err);
-                    return reject(err.message);
-                }
-
-                // Convert file content to Base64
-                const base64Content = data.toString('base64');
-                browserWindow.webContents.send('document-scanned', base64Content);
-
-                cancelWatcher();
-                return resolve(true);
-
-            });
-        })
-    })
+    // watcher = chokidar.watch(directoryToWatch, {ignoreInitial: true});
+    //
+    // return new Promise((resolve, reject) => {
+    //     watcher.on('add', (path) => {
+    //         console.log(path)
+    //         fs.readFile(path, (err, data) => {
+    //             if (err) {
+    //                 console.error('Error reading file:', err);
+    //                 return reject(err.message);
+    //             }
+    //
+    //             // Convert file content to Base64
+    //             const base64Content = data.toString('base64');
+    //             browserWindow.webContents.send('document-scanned', base64Content);
+    //
+    //             cancelWatcher();
+    //             return resolve(true);
+    //
+    //         });
+    //     })
+    // })
 }
 
 
 const cancelWatcher = () => {
-    watcher.close().then(() => {
-        log.info('watcher is closing')
-    }).catch((e)=>{
-        log.error(e.message);
-    })
+    // watcher.close().then(() => {
+    //     log.info('watcher is closing')
+    // }).catch((e)=>{
+    //     log.error(e.message);
+    // })
 }
 
 ipcMain.on('scan-document', async (event) => {
-    const browserWindow = BrowserWindow.fromWebContents(event.sender);
-
-    browserWindow.webContents.send('insert-document-in-scanner');
-    try {
-        await scanDocument(browserWindow)
-        console.log('skeniram se')
-    } catch (e) {
-        log.error(e);
-    }
+    // const browserWindow = BrowserWindow.fromWebContents(event.sender);
+    //
+    // browserWindow.webContents.send('insert-document-in-scanner');
+    // try {
+    //     await scanDocument(browserWindow)
+    //     console.log('skeniram se')
+    // } catch (e) {
+    //     log.error(e);
+    // }
 })
 
 ipcMain.on('cancel-document-scan', async (event) => {
-    const browserWindow = BrowserWindow.fromWebContents(event.sender);
-
-    watcher.close().then(() => {
-        log.info('watcher is closing')
-    }).catch((e)=>{
-        log.error(e.message);
-    })
+    // const browserWindow = BrowserWindow.fromWebContents(event.sender);
+    //
+    // watcher.close().then(() => {
+    //     log.info('watcher is closing')
+    // }).catch((e)=>{
+    //     log.error(e.message);
+    // })
 
 })
 // @ts-ignore
