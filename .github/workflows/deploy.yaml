@@ -34,7 +34,7 @@ jobs:
         run: |
           if [ -d "node_modules" ]; then rm -rf node_modules; fi
           if [ -f "package-lock.json" ]; then rm package-lock.json; fi
-        shell: shell
+        shell: bash
 
       - name: Install dependencies
         run: npm install
