@@ -10,7 +10,7 @@ import {
     ReadCardCommand
 } from "./types/types";
 import {Loading} from "quasar";
-import chokidar, {FSWatcher} from 'chokidar';
+// import chokidar, {FSWatcher} from 'chokidar';
 import fs from "fs";
 import started from "electron-squirrel-startup";
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
