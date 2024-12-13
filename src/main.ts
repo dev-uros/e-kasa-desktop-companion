@@ -13,6 +13,10 @@ import {Loading} from "quasar";
 import chokidar, {FSWatcher} from 'chokidar';
 import fs from "fs";
 
+// Handle creating/removing shortcuts on Windows when installing/uninstalling.
+if (require('electron-squirrel-startup')) {
+    app.quit();
+}
 
 updateElectronApp({
     updateSource: {
@@ -23,10 +27,7 @@ updateElectronApp({
     updateInterval: '1 hour',
     logger: log
 })
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) {
-    app.quit();
-}
+
 
 const createWindow = () => {
     // Create the browser window.
