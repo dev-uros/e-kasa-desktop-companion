@@ -11,7 +11,8 @@ import {
 } from "./types/types";
 import {Loading} from "quasar";
 // import chokidar, {FSWatcher} from 'chokidar';
-import fs from "fs";
+// import fs from "fs";
+// @ts-expect-error no types
 import started from "electron-squirrel-startup";
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 // if (require('electron-squirrel-startup')) {

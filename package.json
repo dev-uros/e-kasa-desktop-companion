@@ -37,11 +37,7 @@
     "sass": "^1.77.8",
     "ts-node": "^10.9.2",
     "typescript": "~4.5.4",
-    "vite": "5.3.3",
-    "electron-squirrel-startup": "^1.0.1",
-    "update-electron-app": "^3.1.0",
-    "pcsclite": "^1.0.1",
-    "quasar": "^2.16.9"
+    "vite": "^5.4.11"
   },
   "keywords": [],
   "author": {
@@ -57,7 +53,11 @@
     "electron-log": "^5.1.7",
     "jimp": "^0.22.12",
     "nanoid": "^5.0.9",
+    "pcsclite": "^1.0.1",
     "pdf-lib": "^1.17.1",
-    "vue": "^3.4.38"
+    "quasar": "^2.16.9",
+    "vue": "^3.4.38",
+    "electron-squirrel-startup": "^1.0.1",
+    "update-electron-app": "^3.1.0"
   }
 }
