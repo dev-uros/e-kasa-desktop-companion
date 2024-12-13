@@ -12,9 +12,13 @@ import {
 import {Loading} from "quasar";
 import chokidar, {FSWatcher} from 'chokidar';
 import fs from "fs";
-
+import started from "electron-squirrel-startup";
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) {
+// if (require('electron-squirrel-startup')) {
+//     app.quit();
+// }
+
+if (started) {
     app.quit();
 }
 
