@@ -1,6 +1,6 @@
 {
-  "name": "port-authority-desktop-client",
-  "productName": "port-authority-desktop-client",
+  "name": "e-kasa-desktop-companion",
+  "productName": "e-kasa-desktop-companion",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".vite/build/main.js",
