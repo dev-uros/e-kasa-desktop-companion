@@ -40,7 +40,8 @@
     "vite": "5.3.3",
     "electron-squirrel-startup": "^1.0.1",
     "update-electron-app": "^3.1.0",
-    "pcsclite": "^1.0.1"
+    "pcsclite": "^1.0.1",
+    "quasar": "^2.16.9"
   },
   "keywords": [],
   "author": {
@@ -57,7 +58,6 @@
     "jimp": "^0.22.12",
     "nanoid": "^5.0.9",
     "pdf-lib": "^1.17.1",
-    "quasar": "^2.16.9",
     "vue": "^3.4.38"
   }
 }
