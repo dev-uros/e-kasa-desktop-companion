@@ -1,0 +1,38 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true,
+    "vue/setup-compiler-macros": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "plugin:import/electron",
+    "plugin:import/typescript",
+    "plugin:vue/vue3-essential"
+  ],
+  "plugins": [
+    "vue",
+    "@typescript-eslint"
+  ],
+  "parser": "vue-eslint-parser",
+  "parserOptions": {
+    "parser": "@typescript-eslint/parser"
+  },
+  //  "parser": "@typescript-eslint/parser",
+  "rules": {
+    "prefer-promise-reject-errors": "off",
+    // this rule, if on, would require explicit return type on the `render` function
+    "@typescript-eslint/explicit-function-return-type": "off",
+    // in plain CommonJS modules, you can't use `import foo = require('foo')` to pass this rule, so it has to be disabled
+    "@typescript-eslint/no-var-requires": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
+    // The core 'no-unused-vars' rules (in the eslint:recommended ruleset)
+    // does not work with type definitions
+    "no-unused-vars": "off",
+    "no-prototype-builtins": "off"
+  }
+}
