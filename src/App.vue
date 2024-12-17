@@ -99,6 +99,7 @@ window.api.onCardInserted(()=>{
   });
 })
 
+
 window.api.onDocumentScanned((result)=>{
   Loading.hide()
   useNotificationMessage(NotificationType.SUCCESS, 'Uspešno skeniran dokument')
