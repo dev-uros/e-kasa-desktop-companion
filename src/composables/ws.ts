@@ -2,7 +2,7 @@ import {Ref, ref} from "vue";
 import {CardData, ConnectionTypes, MedCardData, MessageTypes, ReadCardCommand} from "../types/types";
 import useNotificationMessage, {NotificationType} from "./notification";
 import {Loading} from "quasar";
-import { nanoid } from 'nanoid'
+
 export default function useWebSocket() {
 
     let webSocket: WebSocket;
@@ -23,14 +23,12 @@ export default function useWebSocket() {
 
     let appCode = ''
 
-    const initWebSocket = () => {
+    const initWebSocket = (webSocketUrl: string) => {
 
-        // appCode = nanoid();
 
         appCode = '123456';
 
-        console.log({appCode});
-        webSocket = new WebSocket('ws://localhost:3000/desktop-client')
+        webSocket = new WebSocket(webSocketUrl)
 
         setWebSocketReadyState()
 

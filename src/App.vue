@@ -17,16 +17,16 @@ provide('initWebSocket', initWebSocket)
 
 const applicationKey = ref($q.localStorage.getItem('activationKey'));
 
-$q.cookies.set('activationKey', `${applicationKey.value}`);
-
 
 const setApplicationKey = () => {
   applicationKey.value = $q.localStorage.getItem('activationKey')
 }
 
-onMounted(() => {
+onMounted(async () => {
+  const webSocketUrl = await window.api.getWebSocketUrl();
+  console.log(applicationKey.value);
   if (applicationKey.value) {
-    initWebSocket();
+    initWebSocket(`${webSocketUrl}?authToken=${applicationKey.value}`);
   }
 })
 

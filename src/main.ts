@@ -333,7 +333,7 @@ const submitForm = async (browserWindow: BrowserWindow, appActivationKey: string
     // const $q = useQuasar();
     const submitFormUrl = process.env.NODE_ENV === 'development' ?
         'http://localhost:3000/desktop-client/activate' :
-        'https://94.127.2.98:3000/desktop-client/activate'
+        'http://94.127.4.220:3000/desktop-client/activate'
 
     const data = {
         activation_key: appActivationKey
@@ -348,12 +348,12 @@ const submitForm = async (browserWindow: BrowserWindow, appActivationKey: string
             },
             body: JSON.stringify(data)
         });
-        const jsonResponse = await response.json() as ActivateApplicationDataResponse;
+        // const jsonResponse = await response.json() as ActivateApplicationDataResponse;
         const status = response.status;
 
         switch (status) {
             case 200:
-                browserWindow.webContents.send('app-activated', jsonResponse.data.plainTextActivationKey)
+                browserWindow.webContents.send('app-activated', appActivationKey)
                 break;
             case 401:
                 browserWindow.webContents.send('app-key-invalid', 'Aktivacioni ključ nije validan')
@@ -375,4 +375,12 @@ ipcMain.on('activate-app', async (event, activationKey) => {
     console.log('udje ovde');
     console.log({activationKey})
     await submitForm(browserWindow, activationKey);
+})
+
+ipcMain.handle('get-web-socket-url', () => {
+     if(app.isPackaged){
+         return 'http://94.127.4.220:3000/desktop-client';
+     }else{
+         return 'ws://localhost:3000/desktop-client';
+     }
 })

@@ -35,7 +35,6 @@ window.api.onAppActivated((appKey)=>{
   Loading.hide()
 
     $q.localStorage.set('activationKey', appKey);
-    $q.cookies.set('activationKey', appKey);
 
     useNotificationMessage(NotificationType.SUCCESS, 'Uspešno aktivirana aplikacija')
     emit('applicationActivated')

@@ -4,6 +4,9 @@ import {ipcRenderer, contextBridge} from 'electron'
 import {CardData, MedCardData, ReadCardCommand} from "./types/types";
 
 contextBridge.exposeInMainWorld('api', {
+    getWebSocketUrl: async () => {
+        return await ipcRenderer.invoke('get-web-socket-url')
+    },
     initCardReader:  (cardReadCommand: ReadCardCommand)=>{
          ipcRenderer.send('initialize-card-reader', cardReadCommand);
     },

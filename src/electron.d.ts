@@ -11,6 +11,7 @@ declare global{
     declare interface Window {
 
         api: {
+            getWebSocketUrl: () => string,
             initCardReader: (cardReadCommand: ReadCardCommand) => void
             cancelCardRead: (cardReadCommand: ReadCardCommand) => void
             cancelDocumentScan: () => void
