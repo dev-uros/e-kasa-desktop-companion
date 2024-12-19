@@ -28,13 +28,14 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     icon: './public/icons/icon',
-    name: 'EKasaDesktopCompanion'
+    name: 'EKasaDesktopCompanion',
   },
   rebuildConfig: {},
   makers: [new MakerSquirrel({
     authors: 'Uros Minic',
     description: 'E-kasa desktop companion app',
-    setupIcon: './public/icons/icon.ico'
+    setupIcon: './public/icons/icon.ico',
+    iconUrl: 'https://94.127.4.220/media/icons/desktop-app-icon.ico'
   }), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
   plugins: [
     {
