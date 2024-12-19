@@ -18,8 +18,10 @@ provide('initWebSocket', initWebSocket)
 const applicationKey = ref($q.localStorage.getItem('activationKey'));
 
 
-const setApplicationKey = () => {
+const setApplicationKey = async() => {
   applicationKey.value = $q.localStorage.getItem('activationKey')
+  const webSocketUrl = await window.api.getWebSocketUrl();
+  initWebSocket(`${webSocketUrl}?authToken=${applicationKey.value}`);
 }
 
 onMounted(async () => {

@@ -19,10 +19,6 @@ const activateApplicationData = reactive({
   appActivationKey: '',
 });
 
-
-const submitFormUrl = process.env.NODE_ENV === 'development' ?
-    'http://localhost:3000/desktop-client/activate' :
-    'https://94.127.2.98:3000/desktop-client/activate'
 const submitForm = async () => {
   Loading.show();
 

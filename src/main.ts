@@ -333,7 +333,7 @@ const submitForm = async (browserWindow: BrowserWindow, appActivationKey: string
     // const $q = useQuasar();
     const submitFormUrl = process.env.NODE_ENV === 'development' ?
         'http://localhost:3000/desktop-client/activate' :
-        'http://94.127.4.220:3000/desktop-client/activate'
+        'https://ekasa-websocket.urosminic.com/desktop-client/activate'
 
     const data = {
         activation_key: appActivationKey
@@ -379,7 +379,7 @@ ipcMain.on('activate-app', async (event, activationKey) => {
 
 ipcMain.handle('get-web-socket-url', () => {
      if(app.isPackaged){
-         return 'http://94.127.4.220:3000/desktop-client';
+         return 'wss://ekasa-websocket.urosminic.com/desktop-client';
      }else{
          return 'ws://localhost:3000/desktop-client';
      }
