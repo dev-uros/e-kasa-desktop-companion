@@ -11,9 +11,10 @@ import ReadMedCardList from "./components/ReadMedCardList.vue";
 import ScannedDocument from "./components/ScannedDocument.vue";
 
 const $q = useQuasar();
-const {initWebSocket, webSocketReadyState, handleWebSocketClose, cardData, sendMessage, respondTo, documentBase64} = useWebSocket()
+const {initWebSocket, webSocketReadyState, handleWebSocketClose, cardData, sendMessage, respondTo, documentBase64, reconnectAttempts} = useWebSocket()
 provide('webSocketReadyState', webSocketReadyState);
 provide('initWebSocket', initWebSocket)
+provide('reconnectAttempts', reconnectAttempts)
 
 const applicationKey = ref($q.localStorage.getItem('activationKey'));
 

@@ -1,4 +1,4 @@
-import {Ref, ref} from "vue";
+import {Ref, ref, watch} from "vue";
 import {CardData, ConnectionTypes, MedCardData, MessageTypes, ReadCardCommand} from "../types/types";
 import useNotificationMessage, {NotificationType} from "./notification";
 import {Loading} from "quasar";
@@ -23,9 +23,12 @@ export default function useWebSocket() {
 
     let appCode = ''
 
+    let webSocketUrlWs = '';
+
     const initWebSocket = (webSocketUrl: string) => {
 
 
+        webSocketUrlWs = webSocketUrl;
         appCode = '123456';
 
         webSocket = new WebSocket(webSocketUrl)
@@ -195,6 +198,25 @@ export default function useWebSocket() {
         }));
     }
 
+    const reconnectAttempts = ref(0);
+    watch(webSocketReadyState, (value, oldValue, onCleanup) => {
+        if(value === 3){
+            reconnectAttempts.value++;
+            console.log(reconnectAttempts.value)
+            if(reconnectAttempts.value < 3){
+                setTimeout(()=> {
+                    initWebSocket(webSocketUrlWs)
+                }, 5000)
+
+            }else{
+                reconnectAttempts.value = 0;
+            }
+        }
+        if(value === 1){
+            reconnectAttempts.value = 0;
+
+        }
+    })
     return {
         webSocketReadyState,
         initWebSocket,
@@ -202,6 +224,7 @@ export default function useWebSocket() {
         cardData,
         sendMessage,
         respondTo,
-        documentBase64
+        documentBase64,
+        reconnectAttempts
     }
 }
