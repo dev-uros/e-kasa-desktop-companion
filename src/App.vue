@@ -132,7 +132,7 @@ onUnmounted(() => {
           <q-avatar square>
             <img src="images/logo.png">
           </q-avatar>
-          Desktop Companion Test
+          Desktop Companion
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
