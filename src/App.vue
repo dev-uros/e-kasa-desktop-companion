@@ -28,7 +28,7 @@ const setApplicationKey = async() => {
 
 onMounted(async () => {
   const webSocketUrl = await window.api.getWebSocketUrl();
-  console.log(applicationKey.value);
+  window.api.disconnectPos();
   if (applicationKey.value) {
     initWebSocket(`${webSocketUrl}?authToken=${applicationKey.value}`);
   }

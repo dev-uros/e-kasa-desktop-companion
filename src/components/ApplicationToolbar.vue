@@ -12,7 +12,10 @@ defineProps<Props>()
 
 const $q = useQuasar();
 const posIpAddress = ref($q.localStorage.getItem('posIpAddress') ?? '192.168.0.125')
+if(!$q.localStorage.getItem('posIpAddress')){
   window.api.setPosIpAddress(String(posIpAddress.value));
+
+}
 
 
 const setPosIpAddress = (value: string, initialValue: string) => {

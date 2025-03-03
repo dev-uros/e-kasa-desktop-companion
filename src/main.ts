@@ -360,9 +360,12 @@ const connectAsync = () => {
             log.info('Povezano na Pos, cistim timeout')
             resolve(true)
         });
-        client.on("error", (err) => {
+        client.once("error", (err) => {
             clearTimeout(timeout);
             log.info('Greška pri povezivanju na Pos, čistim timeout')
+
+            client.destroy();
+            client.removeAllListeners();
 
             resolve(false)
         });
@@ -710,6 +713,9 @@ const initPosPayment = async (browserWindow: BrowserWindow, makePosPaymentMessag
 // Handle connection close
     client.on("close", () => {
         log.info("Connection closed");
+        client.removeAllListeners();
+        log.info("Cleared all client listeners")
+
     });
 
 // Handle errors
@@ -743,8 +749,13 @@ function getCurrentDateTime() {
 }
 
 const disconnectPos = async () => {
-    client.destroy();
-    log.log('Client DESTROYED')
+    if(client){
+        if(!client.destroyed){
+            client.end();
+            log.log('Client DESTROYED')
+        }
+    }
+
 
 }
 
@@ -766,7 +777,7 @@ ipcMain.on('disconnect-pos', async (event) => {
     const browserWindow = BrowserWindow.fromWebContents(event.sender);
 
     try {
-        await disconnectPos(browserWindow);
+        await disconnectPos();
 
     } catch (e) {
         log.error(e);
