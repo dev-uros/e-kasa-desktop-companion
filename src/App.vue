@@ -9,6 +9,7 @@ import ApplicationToolbar from "./components/ApplicationToolbar.vue";
 import ReadIdCardList from "./components/ReadIdCardList.vue";
 import ReadMedCardList from "./components/ReadMedCardList.vue";
 import ScannedDocument from "./components/ScannedDocument.vue";
+import BaseTooltip from "./components/BaseTooltip.vue";
 
 const $q = useQuasar();
 const {initWebSocket, webSocketReadyState, handleWebSocketClose, cardData, sendMessage, respondTo, documentBase64, reconnectAttempts} = useWebSocket()
@@ -76,6 +77,23 @@ window.api.onReaderError((error)=>{
   });
 })
 
+window.api.onPosPaymentInitialized(()=>{
+  Loading.show({message: 'Plaćanje preko pos terminala u toku'});
+})
+window.api.onPosTransactionFinished((message)=>{
+  useNotificationMessage(NotificationType.SUCCESS, message.statusCodeDisplay)
+  Loading.hide();
+  sendMessage({
+    messageType: MessageTypes.POS_TRANSACTION_FINISHED,
+    connectionType: ConnectionTypes.DESKTOP,
+    respondTo: respondTo.value,
+    statusCode: message.statusCode,
+    statusCodeDisplay: message.statusCodeDisplay,
+    response:message.response,
+    request: message.request
+  });
+})
+
 window.api.onCardDataLoaded((data)=>{
   Loading.hide()
   useNotificationMessage(NotificationType.SUCCESS, 'Uspešno učitani podaci kartice')
@@ -121,6 +139,10 @@ window.api.onDocumentScanned((result)=>{
 onUnmounted(() => {
   handleWebSocketClose();
 })
+
+const initLogSending = () => {
+  window.api.initLogSending()
+}
 </script>
 
 <template>
@@ -142,7 +164,6 @@ onUnmounted(() => {
         <ActivateApplicationForm v-if="!applicationKey" @application-activated="setApplicationKey"/>
         <q-card v-else>
           <ApplicationToolbar  :is-app-activated="!!applicationKey"/>
-
           <q-card-section>
             <ReadIdCardList v-if="cardData && cardData.cardType === CardType.ID_CARD" :card-data="cardData"/>
             <ReadMedCardList v-if="cardData && cardData.cardType === CardType.MED_CARD" :card-data="cardData"/>
@@ -150,6 +171,11 @@ onUnmounted(() => {
 
           </q-card-section>
         </q-card>
+        <q-page-sticky position="bottom-right" :offset="[18, 18]">
+          <q-btn fab icon="support" color="warning" @click="initLogSending">
+            <BaseTooltip tooltip="Pritisnite za slanje log fajla"/>
+          </q-btn>
+        </q-page-sticky>
       </q-page>
     </q-page-container>
 

@@ -1,4 +1,5 @@
-import {app, BrowserWindow, ipcMain} from 'electron';
+import {app, BrowserWindow, ipcMain, shell} from 'electron';
+import net from 'node:net';
 import path from 'path';
 import log from 'electron-log/main';
 import {updateElectronApp, UpdateSourceType} from "update-electron-app";
@@ -6,7 +7,7 @@ import pcsclite from 'pcsclite'
 import {handleIDCard} from "./idCard/handleIDCard";
 import {handleMedCard} from "./medCard/handleMedCard";
 import {
-    ActivateApplicationDataResponse,
+    ActivateApplicationDataResponse, PosPaymentMessage,
     ReadCardCommand
 } from "./types/types";
 import {Loading} from "quasar";
@@ -89,7 +90,6 @@ app.on('activate', () => {
 // Get a cross-platform path for the user's Documents directory
 // const documentsPath = app.getPath('documents'); // Can be 'desktop', 'downloads', 'home', etc.
 // const directoryToWatch = path.join(documentsPath, 'scanner');
-
 
 
 // let watcher: FSWatcher
@@ -199,8 +199,7 @@ const initCardReader = async (browserWindow: BrowserWindow, readCommand: ReadCar
                     })
                 } else if ((changes & reader.SCARD_STATE_PRESENT) && (status.state & reader.SCARD_STATE_PRESENT)) {
                     //emituj event loading
-                    console.log('LOGUJEM STATUS')
-                    console.log();
+
                     log.info('Card inserted')
                     browserWindow.webContents.send('card-inserted-into-reader');
 
@@ -310,8 +309,474 @@ ipcMain.on('initialize-card-reader', async (event, cardReaderCommand: ReadCardCo
 })
 
 
+const FS = String.fromCharCode(0x1C); // Field Separator (0x1C)
+const RS = String.fromCharCode(0x1E);
+const ETX = String.fromCharCode(0x03); // End of Text (e0x03)
+let HOST = "";
+const PORT = 1401;
+
+let client: net.Socket
+
+const initLogSending = () => {
+    const logFilePath = log.transports.file.getFile().path;
+
+    // Open the default email client
+    shell.openExternal(`mailto:minic.uros.94@gmail.com?subject=OkoiOko Desktop Companion Logs&body=Pored prozora za slanje mejla, otvoren je i prozor koji sadrži log fajl ove aplikacije. Stavite ga kao prilog mejla i pošaljite`)
+        .then(() => {
+            // Open the log file location so user can attach it manually
+            shell.showItemInFolder(logFilePath);
+        });
+
+
+}
+const setPosIpAddress = (browserWindow: BrowserWindow, posIpAddress: string) => {
+
+    if (!client) {
+        HOST = posIpAddress;
+        log.info('Client does not exist, setting pos ip address:' + posIpAddress)
+        return
+    }
+
+    if (client && client.destroyed) {
+        HOST = posIpAddress;
+        log.info('Client exists, is destroyed connection, setting pos ip address:' + posIpAddress)
+        return
+    }
+
+    browserWindow.webContents.send('display-error', 'Ne možete promeniti IP adresu POS uređaja dok je komunikacija sa uređajem u toku!');
+}
+
+const connectAsync = () => {
+    return new Promise((resolve, reject) => {
+        console.log('pokusava da napravim konekciju')
+        const timeout = setTimeout(() => {
+            log.info("Connection timeout: terminating process.");
+            client.destroy();
+            resolve(false);
+        }, 5000); // 5-second timeout
+
+        client.connect(PORT, HOST, () => {
+            clearTimeout(timeout);
+            log.info('Povezano na Pos, cistim timeout')
+            resolve(true)
+        });
+        client.on("error", (err) => {
+            clearTimeout(timeout);
+            log.info('Greška pri povezivanju na Pos, čistim timeout')
+
+            resolve(false)
+        });
+    });
+};
+
+let lastMessageTimeStamp: null | number = null;
+
+const initPosPayment = async (browserWindow: BrowserWindow, makePosPaymentMessage: PosPaymentMessage) => {
+    browserWindow.webContents.send('pos-payment-initialized');
+
+    //(treba da primi iznos, broj rata, transaction id)
+
+    if(!lastMessageTimeStamp){
+        lastMessageTimeStamp = Date.now()
+    }else{
+        const newMessageTimeStamp = Date.now();
+        if(newMessageTimeStamp - lastMessageTimeStamp < 5000){
+            browserWindow.webContents.send('display-error', 'Pos terminal nije spreman za novu komandu, pokušajte ponovo');
+
+            return;
+        }
+    }
+
+
+    log.info('Attempting to connect...');
+
+    client = new net.Socket();
+
+    const connectionState = await connectAsync();
+
+    if(!connectionState){
+        browserWindow.webContents.send('display-error', 'Neuspešno povizivanje sa pos uređajem');
+
+        return;
+    }
+
+    log.info(`Connected to ${HOST}:${PORT}`);
+
+    //payment
+    const now = new Date();
+    const serbianTime = now.toLocaleString('sv-SE', {timeZone: 'Europe/Belgrade', hour12: false});
+    const transactionDate = serbianTime.slice(2, 10).replace(/-/g, ""); // YYMMDD
+    const transactionTime = serbianTime.slice(11, 19).replace(/:/g, "");
+
+    //slati sa web-a
+    const transactionId = makePosPaymentMessage.transactionId;
+    const ecrId = "000001";
+    const messageType = 'REQ';
+    const transactionType = "00"
+    const amount = makePosPaymentMessage.amount
+        //
+    let installmentsAddition = '';
+    if (makePosPaymentMessage.installmentsCount !== "00") {
+        log.info(`Entered ${makePosPaymentMessage.installmentsCount} installments`)
+        installmentsAddition = `${FS}C${makePosPaymentMessage.installmentsCount}00`
+    } else {
+        log.info(`Entered NO installments`)
+        installmentsAddition = `${FS}CFFFF`
+
+    }
+    const statusCode = '000';
+    const message = `${transactionId}${ecrId}${messageType}${transactionType}${transactionDate}${transactionTime}${statusCode}${FS}A${amount}${installmentsAddition}${ETX}`;
+
+    client.write(message, () => {
+        log.info('Message sent: ' + message)
+    });
+// Handle incoming data
+
+    client.on("data", (data) => {
+        const response = data.toString();
+
+        if (response === transactionId) {
+            log.info('ACK received: ' + response);
+
+
+        } else {
+            log.info(`Response received:${response.trim()}`);
+            const statusCode = response.slice(31, 34);
+            let responseMessage;
+            switch (statusCode) {
+                case "000":
+                    log.info("Plaćanje uspešno");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Plaćanje uspešno",
+                        response: response.trim(),
+                        request: message
+                    };
+
+                    break;
+                case "100":
+                    log.info("Nema papira u fiskalnom štampaču");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Nema papira u fiskalnom štampaču",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "110":
+                    log.info("Nema komunikacije sa bankom");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Nema komunikacije sa bankom",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "120":
+                    log.info("Neispravan format poruke");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Neispravan format poruke",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "200":
+                    log.info("Transakcija nije podržana");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Transakcija nije podržana",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "210":
+                    log.info("Kartica nije podržana");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Kartica nije podržana",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "211":
+                    log.info("Neispravna kartica");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Neispravna kartica",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "212":
+                    log.info("Kartica je istekla");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Kartica je istekla",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "220":
+                    log.info("Neispravan broj računa");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Neispravan broj računa",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "230":
+                    log.info("Neispravan kod valute");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Neispravan kod valute",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "231":
+                    log.info("Predautorizacija je istekla");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Predautorizacija je istekla",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "232":
+                    log.info("Predautorizacija nije pronađena");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Predautorizacija nije pronađena",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "233":
+                    log.info("Predautorizacija je već završena");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Predautorizacija je već završena",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "234":
+                    log.info("Predautorizacija je već otkazana");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Predautorizacija je već otkazana",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "300":
+                    log.info("Nedostaje kripto ključ");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Nedostaje kripto ključ",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "400":
+                    log.info("Memorija terminala je puna");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Memorija terminala je puna",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "401":
+                    log.info("Memorija terminala je prazna");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Memorija terminala je prazna",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "410":
+                    log.info("Greška u memoriji terminala");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Greška u memoriji terminala",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "500":
+                    log.info("Korisnik je otkazao plaćanje");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Korisnik je otkazao plaćanje",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "510":
+                    log.info("Vreme isteklo pre autorizacije");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Vreme isteklo pre autorizacije",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "600":
+                    log.info("Terminal je zauzet");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Terminal je zauzet",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "601":
+                    log.info("Terminal je zauzet – preuzimanje podataka u toku");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Terminal je zauzet – preuzimanje podataka u toku",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "602":
+                    log.info("Terminal je zauzet – obrada dnevnog izveštaja u toku");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Terminal je zauzet – obrada dnevnog izveštaja u toku",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "700":
+                    log.info("Poslednja transakcija nije dostupna");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Poslednja transakcija nije dostupna",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "800":
+                    log.info("Storno transakcije");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Storno transakcije",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                case "900":
+                    log.info("Opšta greška terminala");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Opšta greška terminala",
+                        response: response.trim(),
+                        request: message
+                    };
+                    break;
+                default:
+                    log.info("Nepoznat status kod");
+                    responseMessage = {
+                        statusCode: statusCode,
+                        statusCodeDisplay: "Nepoznat status kod",
+                        response: response.trim(),
+                        request: message
+                    };
+            }
+            log.info('Transaction complete sending ACK back: ' + transactionId)
+            client.write(transactionId)
+            if (statusCode === "000") {
+                disconnectPos();
+                // setTimeout(() => {
+                //     log.info('Disconnecting POS by timeout 7sec')
+                //     disconnectPos();
+                // }, 7000)
+            } else {
+                disconnectPos();
+            }
+            lastMessageTimeStamp = Date.now();
+            browserWindow.webContents.send('pos-transaction-finished', responseMessage);
+
+
+        }
+
+    });
+
+// Handle connection close
+    client.on("close", () => {
+        log.info("Connection closed");
+    });
+
+// Handle errors
+    client.on("error", (err) => {
+        log.error("Error:", err.message);
+        lastMessageTimeStamp = Date.now();
+        browserWindow.webContents.send('display-error', err.message);
+
+        client.destroy();
+    });
+
+}
+
+function getCurrentDateTime() {
+    const now = new Date();
+
+    const year = now.getFullYear().toString().slice(2); // Get last two digits of the year
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Get month, zero-padded
+    const day = String(now.getDate()).padStart(2, '0'); // Get day, zero-padded
+    const hour = String(now.getHours()).padStart(2, '0'); // Get hour, zero-padded
+    const minute = String(now.getMinutes()).padStart(2, '0'); // Get minute, zero-padded
+    const second = String(now.getSeconds()).padStart(2, '0'); // Get second, zero-padded
+
+    const date = `${year}${month}${day}`;
+    const time = `${hour}${minute}${second}`;
+
+    return {
+        date,
+        time
+    };
+}
+
+const disconnectPos = async () => {
+    client.destroy();
+    log.log('Client DESTROYED')
+
+}
+
+
+ipcMain.on('initialize-pos-make-payment', async (event, makePosPaymentMessage) => {
+    const browserWindow = BrowserWindow.fromWebContents(event.sender);
+
+    try {
+        await initPosPayment(browserWindow, makePosPaymentMessage);
+
+    } catch (e) {
+        log.error(e);
+
+    }
+
+})
+
+ipcMain.on('disconnect-pos', async (event) => {
+    const browserWindow = BrowserWindow.fromWebContents(event.sender);
+
+    try {
+        await disconnectPos(browserWindow);
+
+    } catch (e) {
+        log.error(e);
+
+    }
+
+})
+
+
 const cancelCardRead = () => {
-    console.log('USAO U CANCEL')
 
     // @ts-ignore
     if (pcsc) {
@@ -344,7 +809,7 @@ const submitForm = async (browserWindow: BrowserWindow, appActivationKey: string
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
-                "Authorization" : `Bearer ${appActivationKey}`
+                "Authorization": `Bearer ${appActivationKey}`
             },
             body: JSON.stringify(data)
         });
@@ -372,15 +837,23 @@ const submitForm = async (browserWindow: BrowserWindow, appActivationKey: string
 ipcMain.on('activate-app', async (event, activationKey) => {
     const browserWindow = BrowserWindow.fromWebContents(event.sender);
 
-    console.log('udje ovde');
-    console.log({activationKey})
     await submitForm(browserWindow, activationKey);
 })
 
 ipcMain.handle('get-web-socket-url', () => {
-     if(app.isPackaged){
-         return 'wss://ekasa-websocket.urosminic.com/desktop-client';
-     }else{
-         return 'ws://localhost:3000/desktop-client';
-     }
+    if (app.isPackaged) {
+        return 'wss://ekasa-websocket.urosminic.com/desktop-client';
+    } else {
+        return 'ws://localhost:3000/desktop-client';
+    }
+})
+
+ipcMain.on('set-pos-ip-address', (event, posIpAddress) => {
+    const browserWindow = BrowserWindow.fromWebContents(event.sender);
+
+    setPosIpAddress(browserWindow, posIpAddress);
+})
+
+ipcMain.on('init-log-sending', (event) => {
+    initLogSending();
 })

@@ -33,16 +33,31 @@ export enum MessageTypes {
     CARD_IS_BEING_READ = 'CARD_IS_BEING_READ',
     CONNECTION_CLOSE = 'CONNECTION_CLOSE',
     DOCUMENT_SCANNED = 'DOCUMENT_SCANNED',
-    INSERT_DOCUMENT_IN_SCANNER = 'INSERT_DOCUMENT_IN_SCANNER'
+    INSERT_DOCUMENT_IN_SCANNER = 'INSERT_DOCUMENT_IN_SCANNER',
+    POS_TRANSACTION_FINISHED = 'POS_TRANSACTION_FINISHED'
+
 
 }
 
+export type PosPaymentMessage = {
+    transactionId: string,
+    amount: string,
+    installmentsCount: string,
+}
+
+export type PosTransactionFinishedMessage = {
+    statusCode: string,
+    statusCodeDisplay: string,
+    response:string,
+    request: string
+}
 export enum ReadCardCommand {
     READ_ID_CARD = 'READ_ID_CARD',
     READ_MED_CARD = 'READ_MED_CARD',
     CANCEL_CARD_READ = 'CANCEL_CARD_READ',
     SCAN_DOCUMENT = 'SCAN_DOCUMENT',
-    CANCEL_SCAN_DOCUMENT = 'CANCEL_SCAN_DOCUMENT'
+    CANCEL_SCAN_DOCUMENT = 'CANCEL_SCAN_DOCUMENT',
+    MAKE_POS_PAYMENT = 'MAKE_POS_PAYMENT',
 
 }
 export enum CardType {

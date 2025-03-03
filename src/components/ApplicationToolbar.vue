@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import ApplicationToolbarActiveStateChip from "./ApplicationToolbarActiveStateChip.vue";
 import ApplicationToolbarWebSocketButton from "./ApplicationToolbarWebSocketButton.vue";
+import {ref} from "vue";
+import {useQuasar} from "quasar";
 
 interface Props {
   isAppActivated: boolean
@@ -8,14 +10,37 @@ interface Props {
 
 defineProps<Props>()
 
+const $q = useQuasar();
+const posIpAddress = ref($q.localStorage.getItem('posIpAddress') ?? '192.168.0.125')
+  window.api.setPosIpAddress(String(posIpAddress.value));
+
+
+const setPosIpAddress = (value: string, initialValue: string) => {
+  window.api.setPosIpAddress(value);
+  $q.localStorage.setItem('posIpAddress', value)
+}
 </script>
 
 <template>
-  <q-toolbar class="bg-secondary">
+  <q-toolbar class="bg-secondary flex justify-between">
 
-    <ApplicationToolbarActiveStateChip :is-app-activated="isAppActivated"/>
+    <div class="flex items-start">
+      <ApplicationToolbarActiveStateChip :is-app-activated="isAppActivated"/>
 
-    <ApplicationToolbarWebSocketButton/>
+      <ApplicationToolbarWebSocketButton/>
+    </div>
+
+
+    <div class="flex items-end">
+      <q-chip>
+        <span>POS IP adresa: {{ posIpAddress }}</span>
+        <q-badge class="q-ml-md" rounded color="info"/>
+        <q-popup-edit v-model="posIpAddress" buttons v-slot="scope" @save="setPosIpAddress">
+          <q-input v-model="scope.value" dense autofocus counter @keyup.enter="scope.set" />
+        </q-popup-edit>
+      </q-chip>
+    </div>
+
 
   </q-toolbar>
 

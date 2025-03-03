@@ -133,6 +133,12 @@ export default function useWebSocket() {
             window.api.cancelDocumentScan()
             Loading.hide()
             useNotificationMessage(NotificationType.ERROR, 'Skeniranje otkazano sa web aplikacije')
+        }else if(message.messageType === ReadCardCommand.MAKE_POS_PAYMENT){
+            respondTo.value = message.respondTo;
+            console.log(message);
+            console.log('usao u make pos payment')
+            window.api.initPosPayment(message)
+
         }
         console.log('ws new incoming message');
     }
@@ -167,7 +173,7 @@ export default function useWebSocket() {
 
     const handleBeforeUnload = () => {
 
-        if(webSocket.readyState === 1 && respondTo.value){
+        if(webSocket.readyState === 1){
             sendMessage({
                 messageType: MessageTypes.CONNECTION_CLOSE,
                 connectionType: ConnectionTypes.DESKTOP,
