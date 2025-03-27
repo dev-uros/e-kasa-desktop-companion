@@ -320,12 +320,13 @@ let client: net.Socket
 const initLogSending = () => {
     const logFilePath = log.transports.file.getFile().path;
 
+    shell.showItemInFolder(logFilePath);
     // Open the default email client
-    shell.openExternal(`mailto:minic.uros.94@gmail.com?subject=OkoiOko Desktop Companion Logs&body=Pored prozora za slanje mejla, otvoren je i prozor koji sadrži log fajl ove aplikacije. Stavite ga kao prilog mejla i pošaljite`)
-        .then(() => {
-            // Open the log file location so user can attach it manually
-            shell.showItemInFolder(logFilePath);
-        });
+    // shell.openExternal(`mailto:minic.uros.94@gmail.com?subject=OkoiOko Desktop Companion Logs&body=Pored prozora za slanje mejla, otvoren je i prozor koji sadrži log fajl ove aplikacije. Stavite ga kao prilog mejla i pošaljite`)
+    //     .then(() => {
+    //         // Open the log file location so user can attach it manually
+    //         shell.showItemInFolder(logFilePath);
+    //     });
 
 
 }
@@ -363,6 +364,10 @@ const connectAsync = () => {
         client.once("error", (err) => {
             clearTimeout(timeout);
             log.info('Greška pri povezivanju na Pos, čistim timeout')
+            log.info('Error message:' + err.message)
+            log.info('Error name:' + err.name)
+            log.info('Error stack:' + err.stack)
+
 
             client.destroy();
             client.removeAllListeners();
@@ -696,10 +701,14 @@ const initPosPayment = async (browserWindow: BrowserWindow, makePosPaymentMessag
             if (statusCode === "000") {
                 disconnectPos();
                 // setTimeout(() => {
-                //     log.info('Disconnecting POS by timeout 7sec')
+                //     log.info('Disconnecting POS by timeout 1sec')
                 //     disconnectPos();
-                // }, 7000)
+                // }, 1000)
             } else {
+                // setTimeout(() => {
+                //     log.info('Disconnecting POS by timeout 1sec')
+                //     disconnectPos();
+                // }, 1000)
                 disconnectPos();
             }
             lastMessageTimeStamp = Date.now();
@@ -720,7 +729,10 @@ const initPosPayment = async (browserWindow: BrowserWindow, makePosPaymentMessag
 
 // Handle errors
     client.on("error", (err) => {
-        log.error("Error:", err.message);
+        log.error("Error message:", err.message);
+        log.error("Error name:", err.name);
+        log.error("Error stack:", err.stack);
+
         lastMessageTimeStamp = Date.now();
         browserWindow.webContents.send('display-error', err.message);
 
