@@ -309,13 +309,7 @@ ipcMain.on('initialize-card-reader', async (event, cardReaderCommand: ReadCardCo
 })
 
 
-const FS = String.fromCharCode(0x1C); // Field Separator (0x1C)
-const RS = String.fromCharCode(0x1E);
-const ETX = String.fromCharCode(0x03); // End of Text (e0x03)
-let HOST = "";
-const PORT = 1401;
 
-let client: net.Socket
 
 const initLogSending = () => {
     const logFilePath = log.transports.file.getFile().path;
@@ -330,6 +324,14 @@ const initLogSending = () => {
 
 
 }
+
+const FS = String.fromCharCode(0x1C); // Field Separator (0x1C)
+const RS = String.fromCharCode(0x1E);
+const ETX = String.fromCharCode(0x03); // End of Text (e0x03)
+let HOST = "";
+const PORT = 1401;
+
+let client: net.Socket
 const setPosIpAddress = (browserWindow: BrowserWindow, posIpAddress: string) => {
 
     if (!client) {
@@ -349,7 +351,13 @@ const setPosIpAddress = (browserWindow: BrowserWindow, posIpAddress: string) => 
 
 const connectAsync = () => {
     return new Promise((resolve, reject) => {
-        console.log('pokusava da napravim konekciju')
+        log.info('pokusava da napravim konekciju')
+        log.info('HOST: ' + HOST)
+        log.info('PORT:' + PORT)
+        log.info('CLIENT READY STATE: ' + client.readyState)
+        log.info('CLIENT DESTROYED: ' + client.destroyed)
+        log.info('CLIENT CLOSED: ' + client.closed)
+
         const timeout = setTimeout(() => {
             log.info("Connection timeout: terminating process.");
             client.destroy();
@@ -369,8 +377,13 @@ const connectAsync = () => {
             log.info('Error stack:' + err.stack)
 
 
+            log.info('CLIENT DESTROYED')
             client.destroy();
             client.removeAllListeners();
+
+            log.info('CLIENT READY STATE: ' + client.readyState)
+            log.info('CLIENT DESTROYED: ' + client.destroyed)
+            log.info('CLIENT CLOSED: ' + client.closed)
 
             resolve(false)
         });
@@ -736,8 +749,29 @@ const initPosPayment = async (browserWindow: BrowserWindow, makePosPaymentMessag
         lastMessageTimeStamp = Date.now();
         browserWindow.webContents.send('display-error', err.message);
 
+        log.info('CLIENT DESTROYED');
         client.destroy();
+
+        log.info('CLIENT READY STATE: ' + client.readyState)
+        log.info('CLIENT DESTROYED: ' + client.destroyed)
+        log.info('CLIENT CLOSED: ' + client.closed)
     });
+
+}
+
+
+const disconnectPos = async () => {
+    if(client){
+        if(!client.destroyed){
+            log.log('Client ENDED')
+
+            client.end();
+            log.info('CLIENT READY STATE: ' + client.readyState)
+            log.info('CLIENT DESTROYED: ' + client.destroyed)
+            log.info('CLIENT CLOSED: ' + client.closed)
+        }
+    }
+
 
 }
 
@@ -759,18 +793,6 @@ function getCurrentDateTime() {
         time
     };
 }
-
-const disconnectPos = async () => {
-    if(client){
-        if(!client.destroyed){
-            client.end();
-            log.log('Client DESTROYED')
-        }
-    }
-
-
-}
-
 
 ipcMain.on('initialize-pos-make-payment', async (event, makePosPaymentMessage) => {
     const browserWindow = BrowserWindow.fromWebContents(event.sender);
