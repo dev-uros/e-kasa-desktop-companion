@@ -345,18 +345,18 @@ const setPosIpAddress = (browserWindow: BrowserWindow, posIpAddress: string) => 
         log.info('Client exists, is destroyed connection, setting pos ip address:' + posIpAddress)
         return
     }
+    log.info('DID NOT SET POS IP ADDRESS: ' + posIpAddress);
+    log.info(client.readyState)
 
     browserWindow.webContents.send('display-error', 'Ne možete promeniti IP adresu POS uređaja dok je komunikacija sa uređajem u toku!');
 }
 
 const connectAsync = () => {
     return new Promise((resolve, reject) => {
-        log.info('pokusava da napravim konekciju')
+        log.info('pokusava da napravi konekciju')
         log.info('HOST: ' + HOST)
         log.info('PORT:' + PORT)
-        log.info('CLIENT READY STATE: ' + client.readyState)
-        log.info('CLIENT DESTROYED: ' + client.destroyed)
-        log.info('CLIENT CLOSED: ' + client.closed)
+
 
         const timeout = setTimeout(() => {
             log.info("Connection timeout: terminating process.");

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ApplicationToolbarActiveStateChip from "./ApplicationToolbarActiveStateChip.vue";
 import ApplicationToolbarWebSocketButton from "./ApplicationToolbarWebSocketButton.vue";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {useQuasar} from "quasar";
 
 interface Props {
@@ -12,10 +12,13 @@ defineProps<Props>()
 
 const $q = useQuasar();
 const posIpAddress = ref($q.localStorage.getItem('posIpAddress') ?? '192.168.0.125')
-if(!$q.localStorage.getItem('posIpAddress')){
+onMounted(() => {
+  console.log('on mounted triggered')
+  console.log('setting pos ip address');
   window.api.setPosIpAddress(String(posIpAddress.value));
+  console.log('did set pos ip address');
 
-}
+})
 
 
 const setPosIpAddress = (value: string, initialValue: string) => {
@@ -39,7 +42,7 @@ const setPosIpAddress = (value: string, initialValue: string) => {
         <span>POS IP adresa: {{ posIpAddress }}</span>
         <q-badge class="q-ml-md" rounded color="info"/>
         <q-popup-edit v-model="posIpAddress" buttons v-slot="scope" @save="setPosIpAddress">
-          <q-input v-model="scope.value" dense autofocus counter @keyup.enter="scope.set" />
+          <q-input v-model="scope.value" dense autofocus counter @keyup.enter="scope.set"/>
         </q-popup-edit>
       </q-chip>
     </div>
