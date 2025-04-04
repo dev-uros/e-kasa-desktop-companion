@@ -309,8 +309,6 @@ ipcMain.on('initialize-card-reader', async (event, cardReaderCommand: ReadCardCo
 })
 
 
-
-
 const initLogSending = () => {
     const logFilePath = log.transports.file.getFile().path;
 
@@ -353,10 +351,10 @@ const setPosIpAddress = (browserWindow: BrowserWindow, posIpAddress: string) => 
 
 const connectAsync = () => {
     return new Promise((resolve, reject) => {
+
         log.info('pokusava da napravi konekciju')
         log.info('HOST: ' + HOST)
         log.info('PORT:' + PORT)
-
 
         const timeout = setTimeout(() => {
             log.info("Connection timeout: terminating process.");
@@ -397,17 +395,23 @@ const initPosPayment = async (browserWindow: BrowserWindow, makePosPaymentMessag
 
     //(treba da primi iznos, broj rata, transaction id)
 
-    if(!lastMessageTimeStamp){
+    if (!lastMessageTimeStamp) {
         lastMessageTimeStamp = Date.now()
-    }else{
+    } else {
         const newMessageTimeStamp = Date.now();
-        if(newMessageTimeStamp - lastMessageTimeStamp < 5000){
+        if (newMessageTimeStamp - lastMessageTimeStamp < 5000) {
             browserWindow.webContents.send('display-error', 'Pos terminal nije spreman za novu komandu, pokušajte ponovo');
 
             return;
         }
     }
 
+    if (client) {
+        log.info('destroying previous client')
+        client.destroy()
+        client.removeAllListeners();
+        log.info('removing listeners from previous client')
+    }
 
     log.info('Attempting to connect...');
 
@@ -415,7 +419,7 @@ const initPosPayment = async (browserWindow: BrowserWindow, makePosPaymentMessag
 
     const connectionState = await connectAsync();
 
-    if(!connectionState){
+    if (!connectionState) {
         browserWindow.webContents.send('display-error', 'Neuspešno povizivanje sa pos uređajem');
 
         return;
@@ -435,7 +439,7 @@ const initPosPayment = async (browserWindow: BrowserWindow, makePosPaymentMessag
     const messageType = 'REQ';
     const transactionType = "00"
     const amount = makePosPaymentMessage.amount
-        //
+    //
     let installmentsAddition = '';
     if (makePosPaymentMessage.installmentsCount !== "00") {
         log.info(`Entered ${makePosPaymentMessage.installmentsCount} installments`)
@@ -761,8 +765,8 @@ const initPosPayment = async (browserWindow: BrowserWindow, makePosPaymentMessag
 
 
 const disconnectPos = async () => {
-    if(client){
-        if(!client.destroyed){
+    if (client) {
+        if (!client.destroyed) {
             log.log('Client ENDED')
 
             client.end();
