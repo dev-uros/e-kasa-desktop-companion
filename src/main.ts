@@ -716,16 +716,1094 @@ const initPosPayment = async (browserWindow: BrowserWindow, makePosPaymentMessag
             log.info('Transaction complete sending ACK back: ' + transactionId)
             client.write(transactionId)
             if (statusCode === "000") {
+                const responseDetailCode = response.slice(95, 99);
+                switch (responseDetailCode) {
+                    case "050":
+                        log.info("Opšti");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Opšti",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "051":
+                        log.info("Kartica je istekla");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Kartica je istekla",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "052":
+                        log.info("Prekoračen broj pokušaja unosa PIN-a");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Prekoračen broj pokušaja unosa PIN-a",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "053":
+                        log.info("Deljenje nije dozvoljeno");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Deljenje nije dozvoljeno",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "054":
+                        log.info("Nedostaje sigurnosni modul");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nedostaje sigurnosni modul",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "055":
+                        log.info("Nevažeća transakcija");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nevažeća transakcija",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "056":
+                        log.info("Transakciju ne podržava institucija");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Transakciju ne podržava institucija",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "057":
+                        log.info("Izgubljena ili ukradena kartica");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Izgubljena ili ukradena kartica",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "058":
+                        log.info("Nevažeći status kartice");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nevažeći status kartice",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "059":
+                        log.info("Ograničen status");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Ograničen status",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "060":
+                        log.info("Račun nije pronađen u bazi korisnika");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Račun nije pronađen u bazi korisnika",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "061":
+                        log.info("Zapis pozitivnog stanja računa nije pronađen");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Zapis pozitivnog stanja računa nije pronađen",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "062":
+                        log.info("Greška pri ažuriranju pozitivnog stanja računa");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Greška pri ažuriranju pozitivnog stanja računa",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "063":
+                        log.info("Nevažeći tip autorizacije u bazi institucije");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nevažeći tip autorizacije u bazi institucije",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "064":
+                        log.info("Loši podaci sa trake");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Loši podaci sa trake",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "065":
+                        log.info("Ispravka nije dozvoljena u bazi institucije");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Ispravka nije dozvoljena u bazi institucije",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "066":
+                        log.info("Nevažeći iznos unapred za kreditnu karticu");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nevažeći iznos unapred za kreditnu karticu",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "067":
+                        log.info("Nevažeći datum transakcije");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nevažeći datum transakcije",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "068":
+                        log.info("Greška u fajlu dnevnika transakcija");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Greška u fajlu dnevnika transakcija",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "069":
+                        log.info("Loše uređena poruka");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Loše uređena poruka",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "070":
+                        log.info("Nema zapisa u bazi institucije");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nema zapisa u bazi institucije",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "071":
+                        log.info("Nevažeće usmeravanje ka glavnoj aplikaciji");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nevažeće usmeravanje ka glavnoj aplikaciji",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "072":
+                        log.info("Kartica na nacionalnoj negativnoj listi");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Kartica na nacionalnoj negativnoj listi",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "073":
+                        log.info("Nevažeće usmeravanje autorizacionog servisa");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nevažeće usmeravanje autorizacionog servisa",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "074":
+                        log.info("Nije moguće autorizovati");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nije moguće autorizovati",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "075":
+                        log.info("Nevažeća dužina PAN-a");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nevažeća dužina PAN-a",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "076":
+                        log.info("Nedovoljna sredstva na računu sa pozitivnim stanjem");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nedovoljna sredstva na računu sa pozitivnim stanjem",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "077":
+                        log.info("Preautorizacija popunjena");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Preautorizacija popunjena",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "078":
+                        log.info("Duplikat transakcije primljen");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Duplikat transakcije primljen",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "079":
+                        log.info("Maksimalan broj online povraćaja dostignut");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Maksimalan broj online povraćaja dostignut",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "080":
+                        log.info("Maksimalan broj offline povraćaja dostignut");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Maksimalan broj offline povraćaja dostignut",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "081":
+                        log.info("Maksimalan kredit po povraćaju dostignut");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Maksimalan kredit po povraćaju dostignut",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "082":
+                        log.info("Maksimalan broj upotreba dostignut");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Maksimalan broj upotreba dostignut",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "083":
+                        log.info("Maksimalan iznos povraćaja dostignut");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Maksimalan iznos povraćaja dostignut",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "084":
+                        log.info("Korisnik izabrao razlog negativne kartice");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Korisnik izabrao razlog negativne kartice",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "085":
+                        log.info("Upit nije dozvoljen—nema stanja");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Upit nije dozvoljen—nema stanja",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "086":
+                        log.info("Prekoračen limit");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Prekoračen limit",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "087":
+                        log.info("Maksimalan broj povraćaja dostignut");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Maksimalan broj povraćaja dostignut",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "088":
+                        log.info("Pozvati");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Pozvati",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "089":
+                        log.info("Status kartice je 0 (neaktivna) ili 9 (zatvorena)");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Status kartice je 0 (neaktivna) ili 9 (zatvorena)",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "090":
+                        log.info("Fajl za preusmeravanje je pun");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Fajl za preusmeravanje je pun",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "091":
+                        log.info("Problem pri pristupu negativnoj listi kartica");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Problem pri pristupu negativnoj listi kartica",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "092":
+                        log.info("Iznos unapred manji od minimalnog");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Iznos unapred manji od minimalnog",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "093":
+                        log.info("Kašnjenje u plaćanju");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Kašnjenje u plaćanju",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "094":
+                        log.info("Prekoračen limit ili raspoloživa sredstva");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Prekoračen limit ili raspoloživa sredstva",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "095":
+                        log.info("Iznos je preko maksimuma");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Iznos je preko maksimuma",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "096":
+                        log.info("PIN je obavezan");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "PIN je obavezan",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "097":
+                        log.info("Mod 10 provera");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Mod 10 provera",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "098":
+                        log.info("Prinudno knjiženje");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Prinudno knjiženje",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "099":
+                        log.info("Nije moguće pristupiti pozitivnom računu u bazi");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nije moguće pristupiti pozitivnom računu u bazi",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "100":
+                        log.info("Nije moguće obraditi transakciju");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nije moguće obraditi transakciju",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "101":
+                        log.info("Nije moguće autorizovati—pozvati");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nije moguće autorizovati—pozvati",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "102":
+                        log.info("Pozvati");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Pozvati",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "103":
+                        log.info("Problem pri pristupu negativnoj listi kartica");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Problem pri pristupu negativnoj listi kartica",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "104":
+                        log.info("Problem pri pristupu računu korisnika");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Problem pri pristupu računu korisnika",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "105":
+                        log.info("Kartica nije podržana");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Kartica nije podržana",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "106":
+                        log.info("Iznos je preko maksimuma");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Iznos je preko maksimuma",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "107":
+                        log.info("Prekoračen dnevni limit");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Prekoračen dnevni limit",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "108":
+                        log.info("Parametri autorizacije kartice nisu pronađeni");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Parametri autorizacije kartice nisu pronađeni",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "109":
+                        log.info("Iznos unapred manji od minimalnog");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Iznos unapred manji od minimalnog",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "110":
+                        log.info("Broj korišćenja");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Broj korišćenja",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "111":
+                        log.info("Kašnjenje u plaćanju");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Kašnjenje u plaćanju",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "112":
+                        log.info("Prekoračen limit");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Prekoračen limit",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "113":
+                        log.info("Vreme je isteklo");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Vreme je isteklo",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "115":
+                        log.info("Fajl dnevnika transakcija je pun");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Fajl dnevnika transakcija je pun",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "120":
+                        log.info("Problem sa podacima o korišćenju kartice");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Problem sa podacima o korišćenju kartice",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "121":
+                        log.info("Problem sa administrativnim podacima kartice");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Problem sa administrativnim podacima kartice",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "122":
+                        log.info("PIN ne može biti potvrđen; sigurnosni modul nije dostupan");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "PIN ne može biti potvrđen; sigurnosni modul nije dostupan",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "130":
+                        log.info("ARQC preusmeravanje");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "ARQC preusmeravanje",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "131":
+                        log.info("CVR preusmeravanje");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "CVR preusmeravanje",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "132":
+                        log.info("TVR preusmeravanje");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "TVR preusmeravanje",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "133":
+                        log.info("Preusmeravanje po razlogu online koda");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Preusmeravanje po razlogu online koda",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "134":
+                        log.info("Fallback preusmeravanje");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Fallback preusmeravanje",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "150":
+                        log.info("Trgovac nije registrovan");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Trgovac nije registrovan",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "200":
+                        log.info("Nevažeći račun");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nevažeći račun",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "201":
+                        log.info("Netačan PIN");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Netačan PIN",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "202":
+                        log.info("Unapred je manji od minimuma");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Unapred je manji od minimuma",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "203":
+                        log.info("Potreban administrativni karton");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Potreban administrativni karton",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "204":
+                        log.info("Unesite manji iznos");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Unesite manji iznos",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "205":
+                        log.info("Nevažeći iznos unapred");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nevažeći iznos unapred",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "206":
+                        log.info("Podaci o autorizaciji korisnika nisu pronađeni");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Podaci o autorizaciji korisnika nisu pronađeni",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "207":
+                        log.info("Nevažeći datum transakcije");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nevažeći datum transakcije",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "208":
+                        log.info("Nevažeći datum isteka");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nevažeći datum isteka",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "209":
+                        log.info("Nevažeći kod transakcije");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nevažeći kod transakcije",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "251":
+                        log.info("Povrat gotovine prelazi dnevni limit");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Povrat gotovine prelazi dnevni limit",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "400":
+                        log.info("ARQC neuspeh");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "ARQC neuspeh",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "401":
+                        log.info("Greška parametra sigurnosnog modula");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Greška parametra sigurnosnog modula",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "402":
+                        log.info("Greška sigurnosnog modula");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Greška sigurnosnog modula",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "403":
+                        log.info("Ključne informacije čipa nisu pronađene");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Ključne informacije čipa nisu pronađene",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "404":
+                        log.info("Neuspeh ATC provere");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Neuspeh ATC provere",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "405":
+                        log.info("CVR odbijeno");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "CVR odbijeno",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "406":
+                        log.info("TVR odbijeno");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "TVR odbijeno",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "407":
+                        log.info("Odbijanje po online kodu");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Odbijanje po online kodu",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "408":
+                        log.info("Fallback odbijeno");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Fallback odbijeno",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "800":
+                        log.info("Greška u formatu");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Greška u formatu",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "801":
+                        log.info("Nevažeći podaci");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nevažeći podaci",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "802":
+                        log.info("Nevažeći broj zaposlenog");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nevažeći broj zaposlenog",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "809":
+                        log.info("Nevažeće zatvaranje transakcije");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nevažeće zatvaranje transakcije",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "810":
+                        log.info("Isteklo vreme transakcije");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Isteklo vreme transakcije",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "811":
+                        log.info("Sistemska greška");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Sistemska greška",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "820":
+                        log.info("Nevažeći identifikator terminala");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nevažeći identifikator terminala",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "821":
+                        log.info("Nevažeća dužina odgovora");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nevažeća dužina odgovora",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "878":
+                        log.info("Greška u dužini PIN-a");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Greška u dužini PIN-a",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "889":
+                        log.info("Greška sinhronizacije KMAC ključa");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Greška sinhronizacije KMAC ključa",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "898":
+                        log.info("Nevažeći MAC");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Nevažeći MAC",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "899":
+                        log.info("Greška sekvence—resinkronizacija");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Greška sekvence—resinkronizacija",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "900":
+                        log.info("Prekoračen broj pokušaja unosa PIN-a");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Prekoračen broj pokušaja unosa PIN-a",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "901":
+                        log.info("Kartica je istekla");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Kartica je istekla",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "902":
+                        log.info("Kod hvatanja iz negativne liste");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Kod hvatanja iz negativne liste",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "903":
+                        log.info("Status kartice je 3 (ukradena)");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Status kartice je 3 (ukradena)",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "904":
+                        log.info("Unapred je manji od minimuma");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Unapred je manji od minimuma",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "905":
+                        log.info("Prekoračen broj korišćenja");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Prekoračen broj korišćenja",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "906":
+                        log.info("Kašnjenje u plaćanju");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Kašnjenje u plaćanju",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "907":
+                        log.info("Prekoračen limit");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Prekoračen limit",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "908":
+                        log.info("Iznos je preko maksimuma");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Iznos je preko maksimuma",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "909":
+                        log.info("Hvatanje");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Hvatanje",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "910":
+                        log.info("Hvatanje po ARQC");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Hvatanje po ARQC",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "911":
+                        log.info("Hvatanje po CVR");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Hvatanje po CVR",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    case "912":
+                        log.info("Hvatanje po TVR");
+                        responseMessage = {
+                            statusCode: responseDetailCode,
+                            statusCodeDisplay: "Hvatanje po TVR",
+                            response: response.trim(),
+                            request: message
+                        };
+                        break;
+                    default:
+                        log.info("Plaćanje uspešno");
+                        responseMessage = {
+                            statusCode: statusCode,
+                            statusCodeDisplay: "Plaćanje uspešno",
+                            response: response.trim(),
+                            request: message
+                        };
+
+                        break;
+                }
                 disconnectPos();
-                // setTimeout(() => {
-                //     log.info('Disconnecting POS by timeout 1sec')
-                //     disconnectPos();
-                // }, 1000)
+
             } else {
-                // setTimeout(() => {
-                //     log.info('Disconnecting POS by timeout 1sec')
-                //     disconnectPos();
-                // }, 1000)
+
                 disconnectPos();
             }
             lastMessageTimeStamp = Date.now();
