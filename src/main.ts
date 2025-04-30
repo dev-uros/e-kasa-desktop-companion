@@ -717,6 +717,8 @@ const initPosPayment = async (browserWindow: BrowserWindow, makePosPaymentMessag
             client.write(transactionId)
             if (statusCode === "000") {
                 const responseDetailCode = response.slice(95, 99);
+                log.info("Checking details code");
+                log.info(responseDetailCode);
                 switch (responseDetailCode) {
                     case "050":
                         log.info("Opšti");
@@ -1807,6 +1809,8 @@ const initPosPayment = async (browserWindow: BrowserWindow, makePosPaymentMessag
                 disconnectPos();
             }
             lastMessageTimeStamp = Date.now();
+            log.info('Response message')
+            log.info(responseMessage);
             browserWindow.webContents.send('pos-transaction-finished', responseMessage);
 
 
