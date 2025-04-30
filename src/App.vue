@@ -143,6 +143,7 @@ onUnmounted(() => {
 const initLogSending = () => {
   window.api.initLogSending()
 }
+console.log('APP VERSION: 1.16')
 </script>
 
 <template>
