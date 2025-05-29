@@ -143,7 +143,6 @@ onUnmounted(() => {
 const initLogSending = () => {
   window.api.initLogSending()
 }
-console.log('APP VERSION: 1.16')
 </script>
 
 <template>
@@ -155,7 +154,7 @@ console.log('APP VERSION: 1.16')
           <q-avatar square>
             <img src="images/logo.png">
           </q-avatar>
-          Desktop Companion
+          Desktop Companion (1.17)
         </q-toolbar-title>
       </q-toolbar>
     </q-header>

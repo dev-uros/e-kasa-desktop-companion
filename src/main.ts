@@ -716,7 +716,7 @@ const initPosPayment = async (browserWindow: BrowserWindow, makePosPaymentMessag
             log.info('Transaction complete sending ACK back: ' + transactionId)
             client.write(transactionId)
             if (statusCode === "000") {
-                const responseDetailCode = response.slice(95, 99).replace(/[^\x20-\x7E]/g, "");
+                const responseDetailCode = response.slice(96, 99).replace(/[^\x20-\x7E]/g, "");
                 log.info("Checking details code");
                 log.info(responseDetailCode);
                 switch (responseDetailCode) {
