@@ -289,6 +289,11 @@ const initCardReader = async (browserWindow: BrowserWindow, readCommand: ReadCar
 
 }
 
+function parseField(response: string, fieldChar: string): string {
+  const idx = response.indexOf(fieldChar);
+  const nextField = response.slice(idx + 1).search(/[A-Za-z]/);
+  return response.slice(idx + 1, idx + 1 + nextField);
+}
 
 ipcMain.on('initialize-card-reader', async (event, cardReaderCommand: ReadCardCommand) => {
 
@@ -716,7 +721,8 @@ const initPosPayment = async (browserWindow: BrowserWindow, makePosPaymentMessag
             log.info('Transaction complete sending ACK back: ' + transactionId)
             client.write(transactionId)
             if (statusCode === "000") {
-                const responseDetailCode = response.slice(96, 99).replace(/[^\x20-\x7E]/g, "");
+                // const responseDetailCode = response.slice(96, 99).replace(/[^\x20-\x7E]/g, "");
+                const responseDetailCode = parseField(response, 'J');
                 log.info("Checking details code");
                 log.info(responseDetailCode);
                 switch (responseDetailCode) {
