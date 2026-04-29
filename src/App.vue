@@ -154,7 +154,7 @@ const initLogSending = () => {
           <q-avatar square>
             <img src="images/logo.png">
           </q-avatar>
-          Desktop Companion (1.18)
+          Desktop Companion (1.19)
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
