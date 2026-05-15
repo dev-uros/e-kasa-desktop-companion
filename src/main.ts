@@ -722,7 +722,8 @@ const initPosPayment = async (browserWindow: BrowserWindow, makePosPaymentMessag
             client.write(transactionId)
             if (statusCode === "000") {
                 // const responseDetailCode = response.slice(96, 99).replace(/[^\x20-\x7E]/g, "");
-                const responseDetailCode = parseField(response, 'J');
+                // eslint-disable-next-line no-control-regex
+                const responseDetailCode = parseField(response, 'J')?.replace(/\x1C/g, '').trim();
                 log.info("Checking details code");
                 log.info(responseDetailCode);
                 switch (responseDetailCode) {
